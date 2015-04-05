@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# GSMTAP dissector
+# The reference implementation is located at :
+# http://cgit.osmocom.org/libosmocore/tree/include/osmocom/core/gsmtap.h
+
 from scapy.packet import Packet, bind_layers
 from scapy.fields import *
 from scapy.layers.inet import UDP
