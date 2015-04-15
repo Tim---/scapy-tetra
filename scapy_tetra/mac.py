@@ -3,15 +3,19 @@
 # MAC PDUs without the type fields (see mac_types.py)
 
 from scapy.packet import Packet, bind_layers
+from scapy.fields import BitField, ConditionalField
 
 from .gsmtap import GSMTAP
-from .mac_header import MAC_UL, MAC_DL, MAC_SCH_HU
+from .mac_type import MAC_UL, MAC_DL, MAC_SCH_HU
 
 # Tables 338/339
 class ACCESS_ASSIGN(Packet):
     name = 'ACCESS-ASSIGN'
     
     fields_desc = [
+        BitField('header', 0, 2),
+        BitField('field1', 0, 6),
+        BitField('field2', 0, 6),
     ]
 
 # Table 336
@@ -47,6 +51,21 @@ class MAC_RESOURCE(Packet):
     name = 'MAC-RESOURCE'
     
     fields_desc = [
+        BitField('fill_bits', 0, 1),
+        BitField('grant', 0, 1),
+        BitField('encrypt', 0, 2),
+        BitField('random_access', 0, 1),
+        BitField('length', 2, 6),
+        BitField('address_type', 1, 3),
+        ConditionalField(BitField('address', 0, 24), lambda pkt: pkt.address_type not in [0, 2]),
+        ConditionalField(BitField('event_label', 0, 10), lambda pkt: pkt.address_type in [2, 5, 7]),
+        ConditionalField(BitField('usage_marker', 0, 6), lambda pkt: pkt.address_type == 6),
+        BitField('pwr_ctl_flag', 0, 1),
+        ConditionalField(BitField('pwr_ctl', 0, 4), lambda pkt: pkt.pwr_ctl_flag == 1),
+        BitField('slot_grt_flag', 0, 1),
+        ConditionalField(BitField('slot_grt', 0, 8), lambda pkt: pkt.slot_grt_flag == 1),
+        BitField('chan_alloc_flag', 0, 1),
+        # FIXME : channel allocation element (Table 341),
     ]
 
 # Table 330

@@ -37,8 +37,8 @@ class GSMTAP(Packet):
         ByteField('signal_dbm', 0),
         ByteField('snr_db', 0),
         IntField('frame_number', 0),
-		ConditionalField(ByteField('sub_type', 0), lambda pkt: pkt.type != 0x05),
-		ConditionalField(ByteEnumField('sub_type', 0, {
+        ConditionalField(ByteField('sub_type', 0), lambda pkt: pkt.type != 0x05),
+        ConditionalField(ByteEnumField('sub_type', 0, {
             0: 'Unknown',
             1: 'BSCH',
             2: 'AACH',
